@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shopping_market/screens/cart_screen.dart';
+import 'package:shopping_market/widgets/badge.dart';
 import 'package:shopping_market/widgets/product_grid.dart';
+
+import '../model/cart_provider.dart';
 
 enum FilterOptions { favourites, all }
 
@@ -14,6 +19,7 @@ class _ProductOverviewState extends State<ProductOverview> {
   bool _showFavourites = false;
   @override
   Widget build(BuildContext context) {
+    print("rebuild");
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.orange,
@@ -42,6 +48,29 @@ class _ProductOverviewState extends State<ProductOverview> {
                       child: Text("Show All"),
                     ),
                   ]),
+          Consumer<Cart>(
+            builder: (_, cart, child) {
+              return Badge(
+                value: cart.itemCount.toString(),
+                color: Colors.orange,
+                child: IconButton(
+                  icon: Icon(Icons.shopping_cart),
+                  onPressed: () {
+                    Navigator.pushNamed(context, CartScreen.routeName);
+                  },
+                ),
+              );
+            },
+            // child: IconButton(
+            //   icon: Icon(
+            //     Icons.shopping_cart,
+            //     color: Colors.red,
+            //   ),
+            //   onPressed: () {
+            //     Navigator.pushNamed(context, CartScreen.routeName);
+            //   },
+            // ),
+          )
         ],
       ),
       body: ProductGrid(

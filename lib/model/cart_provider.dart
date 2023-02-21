@@ -12,4 +12,51 @@ class CartItem {
       required this.quantity});
 }
 
-class Cart with ChangeNotifier {}
+class Cart with ChangeNotifier {
+  final Map<String, CartItem> _items = {};
+  Map<String, CartItem> get items {
+    return {..._items};
+  }
+
+//total length of cart
+  int get itemCount {
+    return _items == null ? 0 : _items.length;
+  }
+
+  //to add a cart
+  void addToCart(String productId, String title, double price) {
+    if (_items.containsKey(productId)) {
+      _items.update(
+        productId,
+        (existingCartItem) => CartItem(
+            id: existingCartItem.id,
+            title: existingCartItem.title,
+            price: existingCartItem.price,
+            quantity: existingCartItem.quantity + 1),
+      );
+    } else {
+      _items.putIfAbsent(
+        productId,
+        () => CartItem(
+            id: DateTime.now().toString(),
+            title: title,
+            price: price,
+            quantity: 1),
+      );
+    }
+    notifyListeners();
+  }
+
+  double get totalAmount {
+    double total = 0.0;
+    _items.forEach((key, cartItem) {
+      total += cartItem.quantity * cartItem.price;
+    });
+    return total;
+  }
+
+  void removeFromCart(String id) {
+    _items.remove(id);
+    notifyListeners();
+  }
+}
